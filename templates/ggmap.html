@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <link href="../static/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="../static/css/ownstyle.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="../static/css/memenu.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="../static/css/unslider.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="../static/css/unslider-dots.css" rel="stylesheet" type="text/css" media="all" />
+    <style type="text/css">
+      html, body { height: 100%; margin: 0; padding: 0; }
+      #map { height: 100%; }
+    </style>
+    <script type="text/javascript" src="../static/js/makers.js"> </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+  </head>
+  <body>
+  <div class="header-top">
+    <div class="header-bottom">
+      <div class="logo myLogo">
+        <h1><a href="/">SIGFOX</a></h1>
+      </div>
+      <div class="top-nav myTop" id="mainHeader">
+        <input type="button" id="mylink" class="btn btn-evento btn-registrar" data-dismiss="modal" value="5 movs" onclick="movs()">
+        <button type="submit" class="btn btn-evento btn-registrar" data-dismiss="modal" value="startSomething">General</button>
+        <button type="submit" class="btn btn-evento btn-registrar" data-dismiss="modal" value="startSomething">Especifico</button>
+
+      </div>
+      <!---->
+      <div class="clearfix"> 
+       
+      </div>
+      <!---->
+    </div>
+    <div class="clearfix"> </div>
+  </div>
+    <div id="map"></div>
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2Xm-_SqcdcHTbhSb2VpPxnExb9mbRcxo&callback=init">
+    </script>
+    <script type="text/javascript">init();</script>
+  </body>
+</html>
