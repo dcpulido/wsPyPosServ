@@ -30,13 +30,11 @@ class Coche:
         self.id=id
 
     def __init__(self,lat,long,id):
-        print "Entrando en constructor coche"
         self.pos=Position(lat,long)
         self.id=id
 
 
     def addPos(self, lat, long):
-        print "Entrando en addPos" 
         self.pos=Position(lat, long)
 
 #
@@ -91,9 +89,9 @@ def position():
    lat= str(struct.unpack('!f',data[0:8].replace(" ","").replace("0x","").upper().decode('hex'))[0])
    lon= str(struct.unpack('!f',data[8:len(data)].replace(" ","").replace("0x","").upper().decode('hex'))[0])  
    device=content["device"]
-   print "IDENTIFICADOR = "+content["device"]
-   print "LATITUD = "+lat
-   print "LONGITUD = "+lon
+   logging.info("FLASK:IDENTIFICADOR = "+content["device"])
+   logging.info("FLASK:LATITUD = "+lat)
+   logging.info("FLASK:LONGITUD = "+lon)
    for c in coches:
        if device == c.id:
            flagExistente = True
@@ -104,7 +102,7 @@ def position():
        coches.append(Coche(lat,lon,device))
 
    else: 
-       print "Ya existe el coche. Solo necesario actualizar posicion"
+       logging.info("FLASK:Ya existe el coche. Solo necesario actualizar posicion")
        for i in coches:
            if device == i.id:
                i.addPos(lat,lon)
@@ -121,7 +119,7 @@ def position():
 @app.route('/shutdown', methods=['GET','POST'])
 def shutdown():
     shutdown_server()
-    return 'Server shutting down...'
+    logging.info("FLASK:Server shutting down...")
 
 def stop_flask():
     urllib2.urlopen("http://localhost:5000/shutdown").read()
@@ -142,8 +140,6 @@ class thWs(threading.Thread,WebsocketServer):
     def set_queue(self,queue):
         self.q=queue
     def run(self):
-        print "iniciando WS"
-        
         server.set_fn_new_client(new_client)
         server.set_fn_client_left(client_left)
         server.set_fn_message_received(message_received)
@@ -151,39 +147,39 @@ class thWs(threading.Thread,WebsocketServer):
 
 
 def new_client(client, server):
-    print("New client connected and was given id %d" % client['id'])
+    logging.info("WEBSOCKET:New client connected and was given id %d" % client['id'])
+    ob.numClien=ob.numClien+1
     
 def client_left(client, server):
-    print("Client(%d) disconnected" % client['id'])
+    logging.info("WEBSOCKET:Client(%d) disconnected" % client['id'])
+    ob.numClien=ob.numClien-1
 
 
 def message_received(client, server, message):
     
-    print("Client(%d) said: %s" % (client['id'], message))
+    logging.info("WEBSOCKET:Client(%d) said: %s" % (client['id'], message))
     sms = message.split("/")
     flagExistente = False
     device=sms[0]
 
     for c in coches:
-       print 
-       print c.id
-       print device
-       print
        if device == c.id:
            flagExistente = True
 
     if flagExistente == False:
       print flagExistente  
-      print "nuevo coche"          
+      logging.info("WEBSOCKET:nuevo coche")          
       coches.append(Coche(sms[2],sms[1],sms[0]))
 
     else: 
-      print "Ya existe el coche. Solo necesario actualizar posicion"
+      logging.info("WEBSOCKET:Ya existe el coche. Solo necesario actualizar posicion")
       for i in coches:
         if device == i.id:
           i.addPos(sms[2],sms[1])
 
-    
+class obs:
+  def __init__(self):
+    self.numClien=0
         
 
 
@@ -195,18 +191,30 @@ def message_received(client, server, message):
 if ( __name__ == "__main__"):
   logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
   coches=[]
+  ob=obs()
   PORT=9001
   server = WebsocketServer(PORT)
-  logging.info("init flask")
+  logging.info("MAIN:init WS")
   ws=thWs()
   ws.start()
+  logging.info("MAIN:init flask")
   myapp=flaskApp()
   myapp.start()
   flag=True
-  while flag:
-    for c in coches:  
-      print "sending "+c.id
-      server.send_message_to_all(c.id+","+c.pos.lat+","+c.pos.long)
-      time.sleep(1 )
+  try:
+    while flag:
+      if ob.numClien>0:
+        for c in coches:  
+          logging.info("WEBSOCKET:sending "+c.id)
+          server.send_message_to_all(c.id+","+c.pos.lat+","+c.pos.long)
+          time.sleep(1 )
+      else:
+        logging.info("WEBSOCKET:no clients")
+        time.sleep(3 )
+  except KeyboardInterrupt:
+    logging.info("MAIN:stop")
+  finally:
+    # clean up
+    server.server_close()
+    stop_flask()
     
-  stop_flask()
