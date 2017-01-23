@@ -24,7 +24,7 @@ class Position:
 #
 #
 
-class Coche:
+class elem:
     def __init__(self,id):
         self.pos=Position(0,0)
         self.id=id
@@ -58,7 +58,7 @@ GoogleMaps(app, key="AIzaSyANXGcxVdZG3807ei_SDYBdCMTHdI3ZN88")
 @app.route ("/makers", methods=['GET'])
 def makers():
   ma="["
-  for car in coches:
+  for car in elems:
        ma+=str(            
            {
                "Id": str(car.id).encode("ascii"),
@@ -92,18 +92,18 @@ def position():
    logging.info("FLASK:IDENTIFICADOR = "+content["device"])
    logging.info("FLASK:LATITUD = "+lat)
    logging.info("FLASK:LONGITUD = "+lon)
-   for c in coches:
+   for c in elems:
        if device == c.id:
            flagExistente = True
        else: 
            flagExistente = False
 
    if flagExistente == False:            
-       coches.append(Coche(lat,lon,device))
+       elems.append(elem(lat,lon,device))
 
    else: 
-       logging.info("FLASK:Ya existe el coche. Solo necesario actualizar posicion")
-       for i in coches:
+       logging.info("FLASK:Ya existe el elemnto. Solo necesario actualizar posicion")
+       for i in elems:
            if device == i.id:
                i.addPos(lat,lon)
 
@@ -162,18 +162,18 @@ def message_received(client, server, message):
     flagExistente = False
     device=sms[0]
 
-    for c in coches:
+    for c in elems:
        if device == c.id:
            flagExistente = True
 
     if flagExistente == False:
       print flagExistente  
-      logging.info("WEBSOCKET:nuevo coche")          
-      coches.append(Coche(sms[2],sms[1],sms[0]))
+      logging.info("WEBSOCKET:nuevo elem")          
+      elems.append(elem(sms[2],sms[1],sms[0]))
 
     else: 
-      logging.info("WEBSOCKET:Ya existe el coche. Solo necesario actualizar posicion")
-      for i in coches:
+      logging.info("WEBSOCKET:Ya existe el elem. Solo necesario actualizar posicion")
+      for i in elems:
         if device == i.id:
           i.addPos(sms[2],sms[1])
 
@@ -190,7 +190,7 @@ class obs:
 
 if ( __name__ == "__main__"):
   logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
-  coches=[]
+  elems=[]
   ob=obs()
   PORT=9001
   server = WebsocketServer(PORT)
@@ -204,7 +204,7 @@ if ( __name__ == "__main__"):
   try:
     while flag:
       if ob.numClien>0:
-        for c in coches:  
+        for c in elems:  
           logging.info("WEBSOCKET:sending "+c.id)
           server.send_message_to_all(c.id+","+c.pos.lat+","+c.pos.long)
           time.sleep(1 )

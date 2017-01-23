@@ -53,22 +53,27 @@ class car{
 			map: null,
 			title: this.name
 		});
-
+		var k= this.id.split(" ")[1]
+		console.log(k)
 		var contentString = '<div id="content">'+
 		      '<div id="siteNotice">'+
 		      '</div>'+
-		      '<h1 id="firstHeading" class="firstHeading">'+this.id+'</h1>'+
+		      '<h1 id="firstHeading" class="firstHeading">'+k+'</h1>'+
 		      '<div id="bodyContent">'+
 		      '<p>Position: Lat: '+this.pos[this.pos.length - 1].lat+'  Long: '+this.pos[this.pos.length - 1].long+
 		      '</div>'+
 		      '</div>';
 
-		  var infowindow = new google.maps.InfoWindow({
-		    content: contentString
-		  });
+
 
 
 		var myLatLng = {lat:lat, lng:lon};
+
+		var infowindow = new google.maps.InfoWindow({
+		    content: contentString,
+		    position:myLatLng
+
+		  });
 		this.mark=new google.maps.Marker({
 			position: myLatLng,
 			map: map,
