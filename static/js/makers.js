@@ -148,7 +148,7 @@ class car{
 
 function init(){
 	map = new google.maps.Map(document.getElementById('map'), {
-	  center: {lat: 42.101771494, lng: -8.614983186},
+	  center: {lat: 42.347514, lng: -7.864270},
 	  zoom: 17
 	});
 	poll();
