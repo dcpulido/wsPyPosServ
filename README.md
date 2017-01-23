@@ -5,12 +5,12 @@ Seguimiento y representación de los dispositivos conectados
 
 <h3>DEPENDENCIAS</h3>
 
-unittest
-urllib2
-sqlite3
-flask
-logging
-ngrok
+unittest\n
+urllib2\n
+sqlite3\n
+flask\n
+logging\n
+ngrok\n
 
 <h3>LANZAMIENTO</h3>
 
